@@ -1,0 +1,16 @@
+[
+    {
+        "channel": "fr.planchat",
+        "path": "/planchat",
+        "redis": {
+            "pub": {
+                "host": "localhost",
+                "port": 6379
+            },
+            "sub": {
+                "host": "localhost",
+                "port": 6379
+            }
+        }
+    }
+]

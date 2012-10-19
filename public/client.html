@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test</title>
+</head>
+<body>
+<ul id="channels">
+    <li><a href="#!/wootook">wootook.org</a></li>
+    <li><a href="#!/planchat">planchat.fr</a></li>
+</ul>
+<div id="messages" style="width:1000px;border:1px solid black;height:800px;overflow:auto;"></div>
+<form>
+    <fieldset id="messageBox">
+        <label for="message">Message</label>
+        <input type="text" id="message" />
+    </fieldset>
+</form>
+<script type="text/javascript" src="js/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="js/socket.io.js"></script>
+<script>
+var username = prompt('Enter your username :');
+
+var initChat = function() {
+    var hash = document.location.hash;
+    if (hash[1] !== '!' && hash[2] !== '/') {
+        return;
+    }
+    var chat = null;
+    chat = io.connect('http://localhost:8000' + hash.substring(2));
+    chat.emit('nickname', username);
+
+    jQuery("#nicknameBox").hide();
+    var $message = jQuery('#message');
+    $message.on('keydown', function(event){
+        if (event.which == 13) {
+            var val = jQuery(this).val();
+            if (val.length > 0) {
+                chat.emit('message', val);
+                jQuery(this).val('');
+            }
+        }
+    });
+    chat.on('message', function(channel, message, nickname, date) {
+        console.log(channel, message, nickname, date);
+        var $chat = jQuery('#messages');
+        $chat.append('<p>' + date + ' | <em>' + nickname + '</em> >' + message + '</p>');
+    });
+};
+
+initChat();
+
+jQuery('a[href$=#!/]').click(initChat);
+</script>
+</body>
+</html>
